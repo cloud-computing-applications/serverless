@@ -3,7 +3,7 @@ require('dotenv').config();
 const bootstrap = require('./database/bootstrap');
 const EmailRepository = require('./reporistory/email');
 sgMail.setApiKey(process.env.SEND_GRID_KEY);
-
+const crypto = require("crypto");
 const sendMail = async (to, first_name, user_id, expiry_buffer) => {
     try {
         await bootstrap();
@@ -13,6 +13,8 @@ const sendMail = async (to, first_name, user_id, expiry_buffer) => {
         return;
     }
 
+    const token = crypto.randomBytes(37).toString('hex');
+
     const msg = {
         to: to,
         from: process.env.SEND_GRID_FROM,
@@ -20,7 +22,7 @@ const sendMail = async (to, first_name, user_id, expiry_buffer) => {
         templateId: process.env.SEND_GRID_TEMPLATE_ID,
         dynamic_template_data: {
             first_name: first_name,
-            link: generateVerificationLink(user_id),
+            link: generateVerificationLink(token),
         }
     };
 
@@ -37,7 +39,7 @@ const sendMail = async (to, first_name, user_id, expiry_buffer) => {
     }
 
     try {
-        await EmailRepository.createEmail(user_id, msg.dynamic_template_data.link, to, expiry_buffer);
+        await EmailRepository.createEmail(user_id, token, msg.dynamic_template_data.link, to, expiry_buffer);
     } catch (error) {
         console.log(error);
         return;
@@ -46,8 +48,8 @@ const sendMail = async (to, first_name, user_id, expiry_buffer) => {
     console.log({ message: "Mail Sent and Stored successfully", to: to, user_id: user_id });
 }
 
-const generateVerificationLink = (user_id) => {
-    const link = process.env.DOMAIN_PROTOCOL + "://" + process.env.DOMAIN_NAME + "/verify-email/" + user_id;
+const generateVerificationLink = (token) => {
+    const link = `${process.env.DOMAIN_PROTOCOL}://${process.env.DOMAIN_NAME}:${process.env.PORT}/v1/user/verify-email/${token}`;
     return link;
 }
 
