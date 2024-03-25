@@ -16,7 +16,7 @@ This is designed to run on google cloud functions, Gen - 2. Provides email verif
     - SEND_GRID_FROM - email of the sender
     - SEND_GRID_TEMPLATE_ID - Id of the custom template created on SendGrid 
     - DOMAIN_PROTOCOL - Protocol for your domain (http or https)
-    - DOMAIN_NAME - Doman name
+    - DOMAIN_NAME - Domain name
     - WEBAPP_PORT - Port on which the server is running
     - DB_USERNAME - Mysql DB username
     - DB_PASSWORD - Mysql DB password
