@@ -1,5 +1,6 @@
 const functions = require('@google-cloud/functions-framework');
 const sendMail = require('./mailer');
+const Logger = require('./logging/logger');
 
 functions.cloudEvent('sendVerificationMail', cloudEvent => {
   const base64name = cloudEvent.data.message.data;
@@ -10,12 +11,12 @@ functions.cloudEvent('sendVerificationMail', cloudEvent => {
   try {
     data = JSON.parse(stringifiedData);
   } catch (error) {
-    console.error("Invalid JSON");
+    Logger.error({ message: "Invalid JSON", content: stringifiedData });
     return;
   }
 
   if(!data.user_id || !data.username || !data.first_name || !data.expiry_buffer) {
-    console.error("Invalid Data");
+    Logger.error({ message: "Missing Data", content: data });
     return;
   }
 

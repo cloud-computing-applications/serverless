@@ -4,12 +4,12 @@ const bootstrap = require('./database/bootstrap');
 const EmailRepository = require('./reporistory/email');
 sgMail.setApiKey(process.env.SEND_GRID_KEY);
 const crypto = require("crypto");
+const Logger = require('./logging/logger');
 const sendMail = async (to, first_name, user_id, expiry_buffer) => {
     try {
         await bootstrap();
     } catch (error) {
-        console.error(error);
-        console.error("DB connection lost");
+        Logger.error({ message: "DB connection lost", content: error });
         return;
     }
 
@@ -29,23 +29,18 @@ const sendMail = async (to, first_name, user_id, expiry_buffer) => {
     try {
         await sgMail.send(msg);
     } catch (error) {
-        console.error(error);
-
-        if (error.response) {
-            console.error(error.response.body)
-        }
-
+        Logger.error({ message: "Mail Sending Failed", content: error });
         return;
     }
 
     try {
         await EmailRepository.createEmail(user_id, token, msg.dynamic_template_data.link, to, expiry_buffer);
     } catch (error) {
-        console.log(error);
+        Logger.error({ message: "Mail Save Failed", content: error });
         return;
     }
 
-    console.log({ message: "Mail Sent and Stored successfully", to: to, user_id: user_id });
+    Logger.info({ message: "Mail Sent and Stored successfully", to: to, user_id: user_id });
 }
 
 const generateVerificationLink = (token) => {
