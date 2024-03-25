@@ -49,7 +49,7 @@ const sendMail = async (to, first_name, user_id, expiry_buffer) => {
 }
 
 const generateVerificationLink = (token) => {
-    const link = `${process.env.DOMAIN_PROTOCOL}://${process.env.DOMAIN_NAME}:${process.env.PORT}/v1/user/verify-email/${token}`;
+    const link = `${process.env.DOMAIN_PROTOCOL}://${process.env.DOMAIN_NAME}:${process.env.WEBAPP_PORT}/v1/user/verify-email/${token}`;
     return link;
 }
 
