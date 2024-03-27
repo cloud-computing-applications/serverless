@@ -5,7 +5,8 @@ const timezone = () => {
 }
 
 const capitalizeLevels = winston.format(info => {
-    info.level = info.level.toUpperCase();
+    info.severity = info.level.toUpperCase();
+    delete info.level;
     return info;
 })
 
