@@ -44,7 +44,7 @@ const sendMail = async (to, first_name, user_id, expiry_buffer) => {
 }
 
 const generateVerificationLink = (token) => {
-    const link = `${process.env.DOMAIN_PROTOCOL}://${process.env.DOMAIN_NAME}/v1/user/verify-email/${token}`;
+    const link = `${process.env.DOMAIN_PROTOCOL}://${process.env.DOMAIN_NAME}/${process.env.VERIFICATION_END_POINT}/${token}`;
     return link;
 }
 
